@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.pradeep.sampleartivatic.R
 import com.pradeep.sampleartivatic.databinding.ItemCountryDetailsLayoutBinding
 import com.pradeep.sampleartivatic.models.Row
@@ -42,7 +43,9 @@ class CountryDetailsAdapter(
         fun bind(countryDetails: Row, context: Context) {
             if (countryDetails.imageHref != null) {
                 binding.image.visibility = View.VISIBLE
-                Glide.with(context).load(countryDetails.imageHref).into(binding.image)
+                Glide.with(context).load(countryDetails.imageHref)
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .into(binding.image)
             } else {
                 binding.image.visibility = View.GONE
             }
