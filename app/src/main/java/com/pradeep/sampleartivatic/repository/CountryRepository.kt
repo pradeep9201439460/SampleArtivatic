@@ -4,8 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.pradeep.sampleartivatic.api.CountryService
 import com.pradeep.sampleartivatic.models.Country
+import javax.inject.Inject
 
-class CountryRepository(private val countryService: CountryService) {
+class CountryRepository @Inject constructor(private val countryService: CountryService) {
 
     private val countryLiveData = MutableLiveData<Country>()
 
