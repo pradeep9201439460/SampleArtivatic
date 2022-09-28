@@ -22,7 +22,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        handleApiCall()
+        
+        binding.pullToRefresh.setOnRefreshListener {
+            handleApiCall()
+        }
+    }
 
+    private fun handleApiCall() {
         viewModel.country.observe(this, {
             when (it) {
                 is Response.Loading -> {
@@ -30,11 +37,11 @@ class MainActivity : AppCompatActivity() {
                 }
                 is Response.Success -> {
                     it.data?.let {
-                        binding.toolbar.title = it.title
-                        binding.contentView.visibility = View.VISIBLE
+                        this.title = it.title
                         val adapter = CountryDetailsAdapter(it.rows, this)
                         binding.recyclerView.adapter = adapter
                         binding.recyclerView.layoutManager = LinearLayoutManager(this)
+                        binding.pullToRefresh.isRefreshing = false
                     }
                     showLoading(false)
 
@@ -42,6 +49,7 @@ class MainActivity : AppCompatActivity() {
                 is Response.Error -> {
                     showErrorScreen(true)
                     showLoading(false)
+                    binding.pullToRefresh.isRefreshing = false
 
                 }
             }

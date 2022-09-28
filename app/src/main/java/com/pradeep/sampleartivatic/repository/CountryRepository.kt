@@ -16,6 +16,7 @@ class CountryRepository @Inject constructor(private val countryService: CountryS
         get() = countryLiveData
 
     suspend fun getCountryDetails() {
+        countryLiveData.postValue(Response.Loading())
         try {
             val result = countryService.getCountryDetail()
             if (result.body() != null) {
