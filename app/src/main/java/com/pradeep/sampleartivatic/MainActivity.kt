@@ -22,11 +22,46 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+
         viewModel.country.observe(this, {
-            binding.contentView.visibility = View.VISIBLE
-            val adapter = CountryDetailsAdapter(it.rows, this)
-            binding.recyclerView.adapter = adapter
-            binding.recyclerView.layoutManager = LinearLayoutManager(this)
+            when (it) {
+                is Response.Loading -> {
+                    showLoading(true)
+                }
+                is Response.Success -> {
+                    it.data?.let {
+                        binding.toolbar.title = it.title
+                        binding.contentView.visibility = View.VISIBLE
+                        val adapter = CountryDetailsAdapter(it.rows, this)
+                        binding.recyclerView.adapter = adapter
+                        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+                    }
+                    showLoading(false)
+
+                }
+                is Response.Error -> {
+                    showErrorScreen(true)
+                    showLoading(false)
+
+                }
+            }
         })
+    }
+
+
+    private fun showLoading(show: Boolean) {
+        if (show) {
+            binding.progressView.visibility = View.VISIBLE
+        } else {
+            binding.progressView.visibility = View.GONE
+        }
+    }
+
+    private fun showErrorScreen(show: Boolean) {
+        if (show) {
+            binding.errorViewImage.visibility = View.VISIBLE
+        } else {
+            binding.errorViewImage.visibility = View.GONE
+        }
     }
 }
